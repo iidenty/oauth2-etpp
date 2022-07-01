@@ -11,12 +11,12 @@ composer require league/oauth2-etpp
 
 ## Usage
 
-Usage is the same as The League's OAuth client, using `\League\OAuth2\Client\Provider\Github` as the provider.
+Usage is the same as The League's OAuth client, using `\League\OAuth2\Client\Provider\Etpp` as the provider.
 
 ### Authorization Code Flow
 
 ```php
-$provider = new League\OAuth2\Client\Provider\Github([
+$provider = new League\OAuth2\Client\Provider\Etpp([
     'clientId'          => '{etpp-client-id}',
     'clientSecret'      => '{etpp-client-secret}',
     'redirectUri'       => 'https://example.com/callback-url',
