@@ -12,7 +12,7 @@ use function json_encode;
 use function sprintf;
 use function uniqid;
 
-class GithubTest extends TestCase
+class EtppTest extends TestCase
 {
     use QueryBuilderTrait;
 
@@ -20,7 +20,7 @@ class GithubTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->provider = new \League\OAuth2\Client\Provider\Github(
+        $this->provider = new \League\OAuth2\Client\Provider\Etpp(
             [
             'clientId' => 'mock_client_id',
             'clientSecret' => 'mock_secret',
@@ -67,7 +67,7 @@ class GithubTest extends TestCase
         $url = $this->provider->getAuthorizationUrl();
         $uri = parse_url($url);
 
-        $this->assertEquals('/login/oauth/authorize', $uri['path']);
+        $this->assertEquals('/authorize', $uri['path']);
     }
 
     public function testGetBaseAccessTokenUrl(): void
@@ -77,7 +77,7 @@ class GithubTest extends TestCase
         $url = $this->provider->getBaseAccessTokenUrl($params);
         $uri = parse_url($url);
 
-        $this->assertEquals('/login/oauth/access_token', $uri['path']);
+        $this->assertEquals('/token', $uri['path']);
     }
 
     public function testGetAccessToken(): void
@@ -104,7 +104,7 @@ class GithubTest extends TestCase
 
     public function testGithubEnterpriseDomainUrls(): void
     {
-        $this->provider->domain = 'https://github.company.com';
+        $this->provider->domain = 'http://109.233.170.40:2244';
 
         $response = m::mock('Psr\Http\Message\ResponseInterface');
         $response->shouldReceive('getBody')
@@ -125,65 +125,11 @@ class GithubTest extends TestCase
 
         $token = $this->provider->getAccessToken('authorization_code', ['code' => 'mock_authorization_code']);
 
-        $providerAuthorizationUrl = $this->provider->domain . '/login/oauth/authorize';
-        $providerAccessTokenUrl = $this->provider->domain . '/login/oauth/access_token';
-        $providerResourceOwnerUrl = $this->provider->domain . '/api/v3/user';
+        $providerAuthorizationUrl = $this->provider->domain . '/authorize';
+        $providerAccessTokenUrl = $this->provider->domain . '/token';
 
         $this->assertEquals($providerAuthorizationUrl, $this->provider->getBaseAuthorizationUrl());
         $this->assertEquals($providerAccessTokenUrl, $this->provider->getBaseAccessTokenUrl([]));
-        $this->assertEquals($providerResourceOwnerUrl, $this->provider->getResourceOwnerDetailsUrl($token));
-    }
-
-    public function testUserData(): void
-    {
-        $userId = rand(1000, 9999);
-        $name = uniqid();
-        $nickname = uniqid();
-        $email = uniqid();
-
-        $postResponse = m::mock('Psr\Http\Message\ResponseInterface');
-        $postResponse->shouldReceive('getBody')
-                     ->andReturn(http_build_query([
-                         'access_token' => 'mock_access_token',
-                         'expires' => 3600,
-                         'refresh_token' => 'mock_refresh_token',
-                     ]));
-        $postResponse->shouldReceive('getHeader')
-                     ->andReturn(['content-type' => 'application/x-www-form-urlencoded']);
-        $postResponse->shouldReceive('getStatusCode')
-                     ->andReturn(200);
-
-        $userResponse = m::mock('Psr\Http\Message\ResponseInterface');
-        $userResponse->shouldReceive('getBody')
-                     ->andReturn(json_encode([
-                         "id" => $userId,
-                         "login" => $nickname,
-                         "name" => $name,
-                         "email" => $email
-                     ]));
-        $userResponse->shouldReceive('getHeader')
-                     ->andReturn(['content-type' => 'json']);
-        $userResponse->shouldReceive('getStatusCode')
-                     ->andReturn(200);
-
-        $client = m::mock('GuzzleHttp\ClientInterface');
-        $client->shouldReceive('send')
-            ->times(2)
-            ->andReturn($postResponse, $userResponse);
-        $this->provider->setHttpClient($client);
-
-        $token = $this->provider->getAccessToken('authorization_code', ['code' => 'mock_authorization_code']);
-        $user = $this->provider->getResourceOwner($token);
-
-        $this->assertEquals($userId, $user->getId());
-        $this->assertEquals($userId, $user->toArray()['id']);
-        $this->assertEquals($name, $user->getName());
-        $this->assertEquals($name, $user->toArray()['name']);
-        $this->assertEquals($nickname, $user->getNickname());
-        $this->assertEquals($nickname, $user->toArray()['login']);
-        $this->assertEquals($email, $user->getEmail());
-        $this->assertEquals($email, $user->toArray()['email']);
-        $this->assertStringContainsString($nickname, $user->getUrl());
     }
 
     public function testExceptionThrownWhenErrorObjectReceived(): void

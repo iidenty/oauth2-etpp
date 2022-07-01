@@ -1,8 +1,13 @@
 {
-    "name": "league/oauth2-github",
-    "description": "Github OAuth 2.0 Client Provider for The PHP League OAuth2-Client",
+    "name": "da3nil/oauth2-etpp",
+    "description": "Etpp OAuth 2.0 Client Provider for The PHP League OAuth2-Client",
     "license": "MIT",
     "authors": [
+        {
+            "name": "Danil Prytkov",
+            "email": "d.prytckov@yandex.ru",
+            "homepage": "https://github.com/stevenmaguire"
+        },
         {
             "name": "Steven Maguire",
             "email": "stevenmaguire@gmail.com",
@@ -20,7 +25,7 @@
         "client",
         "authorization",
         "authorisation",
-        "github"
+        "etpp"
     ],
     "require": {
         "php": "^7.3 || ^8.0",

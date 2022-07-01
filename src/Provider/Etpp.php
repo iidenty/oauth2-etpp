@@ -2,12 +2,13 @@
 
 namespace League\OAuth2\Client\Provider;
 
-use League\OAuth2\Client\Provider\Exception\GithubIdentityProviderException;
+use League\OAuth2\Client\Provider\Exception\EtppIdentityProviderException;
+use League\OAuth2\Client\Provider\Exception\NotImplementedException;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\ResponseInterface;
 
-class Github extends AbstractProvider
+class Etpp extends AbstractProvider
 {
     use BearerAuthorizationTrait;
 
@@ -16,14 +17,14 @@ class Github extends AbstractProvider
      *
      * @var string
      */
-    public $domain = 'https://github.com';
+    public $domain = 'http://109.233.170.40:2244';
 
     /**
      * Api domain
      *
      * @var string
      */
-    public $apiDomain = 'https://api.github.com';
+    public $apiDomain = 'http://109.233.170.40:2244/api';
 
     /**
      * Get authorization url to begin OAuth flow
@@ -32,7 +33,7 @@ class Github extends AbstractProvider
      */
     public function getBaseAuthorizationUrl()
     {
-        return $this->domain . '/login/oauth/authorize';
+        return $this->domain . '/authorize';
     }
 
     /**
@@ -44,7 +45,7 @@ class Github extends AbstractProvider
      */
     public function getBaseAccessTokenUrl(array $params)
     {
-        return $this->domain . '/login/oauth/access_token';
+        return $this->domain . '/token';
     }
 
     /**
@@ -56,10 +57,7 @@ class Github extends AbstractProvider
      */
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
-        if ($this->domain === 'https://github.com') {
-            return $this->apiDomain . '/user';
-        }
-        return $this->domain . '/api/v3/user';
+        throw new NotImplementedException('User is not supported');
     }
 
     /**
@@ -88,9 +86,9 @@ class Github extends AbstractProvider
     protected function checkResponse(ResponseInterface $response, $data)
     {
         if ($response->getStatusCode() >= 400) {
-            throw GithubIdentityProviderException::clientException($response, $data);
+            throw EtppIdentityProviderException::clientException($response, $data);
         } elseif (isset($data['error'])) {
-            throw GithubIdentityProviderException::oauthException($response, $data);
+            throw EtppIdentityProviderException::oauthException($response, $data);
         }
     }
 
@@ -103,8 +101,6 @@ class Github extends AbstractProvider
      */
     protected function createResourceOwner(array $response, AccessToken $token)
     {
-        $user = new GithubResourceOwner($response);
-
-        return $user->setDomain($this->domain);
+        throw new NotImplementedException('User is not supported');
     }
 }
