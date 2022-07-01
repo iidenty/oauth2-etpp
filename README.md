@@ -6,7 +6,7 @@ This package provides Etpp OAuth 2.0 support for the PHP League's [OAuth 2.0 Cli
 To install, use composer:
 
 ```
-composer require league/oauth2-etpp
+composer require da3nil/oauth2-etpp
 ```
 
 ## Usage
