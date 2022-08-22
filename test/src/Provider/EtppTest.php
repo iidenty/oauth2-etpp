@@ -104,7 +104,7 @@ class EtppTest extends TestCase
 
     public function testGithubEnterpriseDomainUrls(): void
     {
-        $this->provider->domain = 'http://109.233.170.40:2244';
+        $this->provider->domain = 'https://oauth2.etpp.ru';
 
         $response = m::mock('Psr\Http\Message\ResponseInterface');
         $response->shouldReceive('getBody')

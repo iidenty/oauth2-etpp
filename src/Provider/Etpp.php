@@ -3,6 +3,7 @@
 namespace League\OAuth2\Client\Provider;
 
 use League\OAuth2\Client\Provider\Exception\EtppIdentityProviderException;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\Exception\NotImplementedException;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
@@ -17,21 +18,21 @@ class Etpp extends AbstractProvider
      *
      * @var string
      */
-    public $domain = 'http://109.233.170.40:2244';
+    public $domain = 'https://oauth2.etpp.ru';
 
     /**
      * Api domain
      *
      * @var string
      */
-    public $apiDomain = 'http://109.233.170.40:2244/api';
+    public $apiDomain = 'https://oauth2.etpp.ru/api';
 
     /**
      * Get authorization url to begin OAuth flow
      *
      * @return string
      */
-    public function getBaseAuthorizationUrl()
+    public function getBaseAuthorizationUrl(): string
     {
         return $this->domain . '/authorize';
     }
@@ -43,7 +44,7 @@ class Etpp extends AbstractProvider
      *
      * @return string
      */
-    public function getBaseAccessTokenUrl(array $params)
+    public function getBaseAccessTokenUrl(array $params): string
     {
         return $this->domain . '/token';
     }
@@ -55,7 +56,7 @@ class Etpp extends AbstractProvider
      *
      * @return string
      */
-    public function getResourceOwnerDetailsUrl(AccessToken $token)
+    public function getResourceOwnerDetailsUrl(AccessToken $token): string
     {
         throw new NotImplementedException('User is not supported');
     }
@@ -68,7 +69,7 @@ class Etpp extends AbstractProvider
      *
      * @return array
      */
-    protected function getDefaultScopes()
+    protected function getDefaultScopes(): array
     {
         return [];
     }
@@ -97,9 +98,9 @@ class Etpp extends AbstractProvider
      *
      * @param  array       $response
      * @param  AccessToken $token
-     * @return \League\OAuth2\Client\Provider\ResourceOwnerInterface
+     * @return ResourceOwnerInterface
      */
-    protected function createResourceOwner(array $response, AccessToken $token)
+    protected function createResourceOwner(array $response, AccessToken $token): ResourceOwnerInterface
     {
         throw new NotImplementedException('User is not supported');
     }
